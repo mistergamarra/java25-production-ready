@@ -14,34 +14,36 @@ jobs:
       - name: Checkout Template Context
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetches full history so semantic version parsing runs accurately
 
-      # FIX: Cleaned up the variable formatting. Bypasses escaping bugs entirely
-      # to yield valid SemVer tags like 'v2026.09.20-blueprint-42'.
-      - name: Generate SemVer Blueprint Version Tag
-        id: tag_version
-        run: |
-          VERSION="v\((date +'\%Y.\%m.\%d')-blueprint-\){{ github.run_number }}"
-          echo "version=VERSION" >> GITHUB_OUTPUT
-          echo "Calculated Target Architectural Blueprint Release Tag: \${VERSION}"
+      # 1. FIX: Natively calculates proper semantic version increments (Major.Minor.Patch)
+      # based on commit message headers (e.g., feat = minor, fix = patch)
+      - name: Calculate Semantic Version Tag
+        id: semver
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "(BREAKING CHANGE:)"
+          minor_pattern: "feat:"
+          version_format: "\${major}.minor.{patch}"
 
       - name: Compile Architectural Change Logs from Commits
         id: release_notes
         run: |
           echo "Parsing recent merge logs to construct technical changelog..."
-          
           echo "body<<EOF" >> \$GITHUB_OUTPUT
           git log --oneline -n 20 --pretty=format:"* %h - %s" >> \$GITHUB_OUTPUT
           echo "" >> \$GITHUB_OUTPUT
           echo "EOF" >> \$GITHUB_OUTPUT
 
+      # 2. Publishes the release using the dynamically generated SemVer tag string
       - name: Publish Official GitHub Scaffolding Template Baseline Release
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: \${{ steps.tag_version.outputs.version }}
-          name: Scaffolding Blueprint \${{ steps.tag_version.outputs.version }}
+          tag_name: v\${{ steps.semver.outputs.version }}
+          name: Scaffolding Blueprint v\${{ steps.semver.outputs.version }}
           body: |
             ## 🏗️ Baseline Java 25 Microservice Scaffold Specifications
             
