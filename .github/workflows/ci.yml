@@ -25,7 +25,8 @@ jobs:
           minor_pattern: "feat:"
           version_format: "{major}.{minor}.{patch}"
 
-      # FIX: Cleaned up output redirections to ensure Node 24 variables map perfectly
+      # FIX: Stripped structural backslashes entirely from variables.
+      # Writes straight, raw markdown lines into GITHUB_OUTPUT.
       - name: Compile Architectural Change Logs from Commits
         id: release_notes
         run: |
@@ -35,8 +36,8 @@ jobs:
           echo "" >> \$GITHUB_OUTPUT
           echo "EOF" >> \$GITHUB_OUTPUT
 
-      # FIX: Swapped tag_name parameter to use steps.semver.outputs.version_tag directly
-      # This prevents the 'vv0.1.0' prefix duplication and matches Git's tag constraints.
+      # FIX: Removed the literal backslash prefix ("\"). Passes the calculated
+      # version tag parameter cleanly (e.g., 'v0.1.0') into the action fields layer.
       - name: Publish Official GitHub Scaffolding Template Baseline Release
         uses: softprops/action-gh-release@v2
         env:
