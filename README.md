@@ -1,6 +1,6 @@
 # ⚡ Java 25 Production-Ready Native Microservice Scaffold
 
-[![CI Status](https://github.com)](https://github.com)
+[![CI Status](https://github.com)](https://git1hub.com)
 [![Latest Release](https://shields.io)](https://github.com)
 [![License: MIT](https://shields.io)](LICENSE)
 
