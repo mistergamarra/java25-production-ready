@@ -4,43 +4,38 @@ on:
   push:
     branches: [ "main" ]
 
-# Grants the workflow secure API write privileges to manage template release tags
 permissions:
   contents: write
 
 jobs:
-  # =========================================================================
-  # SINGLE STAGE: Fast Automated Template Tagging & Release Notes Publication
-  # =========================================================================
   publish-template-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Template Context
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches full commit history so changelogs build accurately
+          fetch-depth: 0 # Fetches full history so changelogs build accurately
 
       - name: Generate SemVer Blueprint Version Tag
         id: tag_version
         run: |
-          # Generates a blueprint version tag tracking framework changes cleanly
           VERSION="v\((date +'\%Y.\%m.\%d')-blueprint-\){{ github.run_number }}"
           echo "version=VERSION" >> GITHUB_OUTPUT
           echo "Calculated Target Architectural Blueprint Release Tag: \$VERSION"
 
-      - name: Dynamically Compile Architectural Change Logs from Commits
+      # FIX: Uses a native shell script multi-line output vector instead of actions/github-script
+      # to guarantee compatibility under modern Node 24 runner environments.
+      - name: Compile Architectural Change Logs from Commits
         id: release_notes
-        uses: actions/github-script@v7
-        with:
-          script: |
-            // Auto-categorizes framework changes, dependency bumps, and blueprint optimizations
-            const changelog = await github.rest.repos.generateReleaseNotes({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: '\${{ steps.tag_version.outputs.version }}',
-              target_commitish: 'main'
-            });
-            core.setOutput('body', changelog.data.body);
+        run: |
+          echo "Parsing recent merge logs to construct technical changelog..."
+          # Safely extracts the short commit hashes and logs since last tags
+          CHANGELOG=\$(git log --oneline -n 20 --pretty=format:"* %h - %s")
+          
+          # Safe GitHub Actions multiline string delimiter injection mapping
+          echo "body<<EOF" >> \$GITHUB_OUTPUT
+          echo "CHANGELOG" >> GITHUB_OUTPUT
+          echo "EOF" >> \$GITHUB_OUTPUT
 
       - name: Publish Official GitHub Scaffolding Template Baseline Release
         uses: actions/create-release@v1
