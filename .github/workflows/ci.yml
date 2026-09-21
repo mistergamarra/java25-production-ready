@@ -14,9 +14,8 @@ jobs:
       - name: Checkout Template Context
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches full history so semantic version parsing runs accurately
+          fetch-depth: 0
 
-      # 1. FIX: Removed backslash formatting strings to resolve YAML compilation errors
       - name: Calculate Semantic Version Tag
         id: semver
         uses: paulhatch/semantic-version@v5.4.0
@@ -35,14 +34,15 @@ jobs:
           echo "" >> \$GITHUB_OUTPUT
           echo "EOF" >> \$GITHUB_OUTPUT
 
-      # 2. Publishes the release using the clean, dynamic SemVer tag variables output mapping
+      # FIX: Uses steps.semver.outputs.version_tag to pass a valid SemVer tag format string
+      # (e.g. 'v1.0.1') directly into the GitHub API context parameters layer
       - name: Publish Official GitHub Scaffolding Template Baseline Release
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v\${{ steps.semver.outputs.version }}
-          name: Scaffolding Blueprint v\${{ steps.semver.outputs.version }}
+          tag_name: \${{ steps.semver.outputs.version_tag }}
+          name: Scaffolding Blueprint \${{ steps.semver.outputs.version_tag }}
           body: |
             ## 🏗️ Baseline Java 25 Microservice Scaffold Specifications
             
