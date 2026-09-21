@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/v1/promos/validate\\?code=(FREE_DELIVERY|BURGER_FEST|DISCOUNT_10)"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"status\":\"VALID\",\"discount_percentage\":15.0}"
+  }
+}

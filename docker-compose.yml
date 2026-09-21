@@ -1,0 +1,107 @@
+services:
+  # 1. Microscopic, Framework-Free Java 25 Application Container
+  app:
+    image: java25-production-ready:latest
+    container_name: java25-production-ready-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=jdbc:postgresql://postgres-db:5432/java25-production-ready-db?sslmode=disable
+      - DB_USER=postgres
+      - DB_PASSWORD=password1
+      # FIX: Explicitly direct your PromoClient to route internally to the mock service name container
+      - PROMO_API_URL=http://promo-mock-server:8081/v1/promos/validate?code=
+      - OTEL_ENABLED=false
+    depends_on:
+      flyway-migration:
+        condition: service_completed_successfully
+      promo-mock-server:
+        condition: service_started # Ensure the HTTP target engine is routing sockets before app boots
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 64M
+    networks:
+      - microservice-mesh
+
+    # 2. High-Performance, Production-Ready Mock HTTP API Server Container
+  promo-mock-server:
+    # FIX: Swapped to the official mainstream tag that natively supports ARM64 Apple Silicon
+    image: wiremock/wiremock:latest
+    container_name: java25-production-ready-mock-api
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./load-test/wiremock/mappings:/home/wiremock/mappings
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+    networks:
+      - microservice-mesh
+
+  # 3. Isolated Automated Database Migration Engine Container
+  flyway-migration:
+    image: flyway/flyway:10-alpine
+    container_name: java25-production-ready-migration
+    command: -url=jdbc:postgresql://postgres-db:5432/java25-production-ready-db?sslmode=disable -user=postgres -password=password1 -connectRetries=60 migrate
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - microservice-mesh
+
+  # 4. Performance-Tuned PostgreSQL Database Container
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: java25-production-ready-db
+    environment:
+      POSTGRES_DB: java25-production-ready-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password1
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c max_connections=50
+      -c shared_buffers=512MB
+      -c effective_cache_size=1536MB
+      -c maintenance_work_mem=128MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=16MB
+      -c huge_pages=off
+      -c min_wal_size=1GB
+      -c max_wal_size=4GB
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d java25-production-ready-db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - microservice-mesh
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  microservice-mesh:
+    driver: bridge

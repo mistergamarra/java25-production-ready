@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/v1/promos/validate\\?code=FAIL_500"
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"error\":\"Internal database error occurred inside promo cluster service engine\"}"
+  }
+}

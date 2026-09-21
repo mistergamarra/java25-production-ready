@@ -1,0 +1,20 @@
+{
+  "proto": "src/main/proto/order.proto",
+  "call": "order.OrderService.CreateOrder",
+  "total": 100000,
+  "concurrency": 1000,
+  "insecure": true,
+  "host": "localhost:8080",
+  "data": {
+    "user_id": "placeholder_ci",
+    "restaurant_id": "placeholder_ci",
+    "order_type": "DELIVERY",
+    "items_total": 0.0,
+    "delivery_fee": 0.0,
+    "promo_code": "",
+    "delivery_latitude": "0.0",
+    "delivery_longitude": "0.0",
+    "device_os": "IOS",
+    "payment_method": "CREDIT_CARD"
+  }
+}

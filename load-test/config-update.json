@@ -1,0 +1,16 @@
+{
+  "proto": "src/main/proto/order.proto",
+  "call": "order.OrderService.UpdateOrder",
+  "total": 100000,
+  "concurrency": 1000,
+  "insecure": true,
+  "host": "localhost:8080",
+  "data": {
+    "order_id": "00000000-0000-0000-0000-000000000000",
+    "status": "COMPLETED",
+    "order_type": "PICKUP",
+    "items_total": 45.50,
+    "delivery_fee": 0.0,
+    "promo_code": "BURGER_FEST"
+  }
+}

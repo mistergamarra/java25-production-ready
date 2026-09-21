@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/v1/promos/validate\\?code=BAD_REQUEST"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"error\":\"Malformed promo string validation token sequence mapping specification\"}"
+  }
+}

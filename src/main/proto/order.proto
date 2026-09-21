@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.mistergamarra.grpc";
+option java_outer_classname = "OrderProto";
+
+package order;
+
+service OrderService {
+  rpc CreateOrder (CreateOrderRequest) returns (OrderResponse);
+  rpc GetOrder (OrderRequest) returns (OrderResponse);
+  rpc UpdateOrder (UpdateOrderRequest) returns (OrderResponse);
+  rpc DeleteOrder (OrderRequest) returns (DeleteOrderResponse);
+}
+
+message CreateOrderRequest {
+  string user_id = 1;
+  string restaurant_id = 2;
+  string order_type = 3;
+  double items_total = 4;
+  double delivery_fee = 5;
+  string promo_code = 6;
+  string delivery_latitude = 7;
+  string delivery_longitude = 8;
+  string device_os = 9;
+  string payment_method = 10;
+}
+
+message UpdateOrderRequest {
+  string order_id = 1;
+  string status = 2;
+  string order_type = 3;
+  double items_total = 4;
+  double delivery_fee = 5;
+  string promo_code = 6;
+}
+
+message OrderRequest {
+  string order_id = 1;
+}
+
+message OrderResponse {
+  string order_id = 1;
+  string status = 2;
+  double total = 3;
+}
+
+message DeleteOrderResponse {
+  string order_id = 1;
+  bool success = 2;
+}

@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPattern": "/v1/promos/validate\\?code=DELAY_250"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 250,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{\"status\":\"VALID\",\"discount_percentage\":10.0}"
+  }
+}
