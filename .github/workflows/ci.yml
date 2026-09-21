@@ -14,7 +14,7 @@ jobs:
       - name: Checkout Template Context
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches full history so changelogs build accurately
+          fetch-depth: 0
 
       - name: Generate SemVer Blueprint Version Tag
         id: tag_version
@@ -23,18 +23,16 @@ jobs:
           echo "version=VERSION" >> GITHUB_OUTPUT
           echo "Calculated Target Architectural Blueprint Release Tag: \$VERSION"
 
-      # FIX: Uses a native shell script multi-line output vector instead of actions/github-script
-      # to guarantee compatibility under modern Node 24 runner environments.
+      # FIX: Uses target environmental mappings to protect parentheses syntax parsing
       - name: Compile Architectural Change Logs from Commits
         id: release_notes
         run: |
           echo "Parsing recent merge logs to construct technical changelog..."
-          # Safely extracts the short commit hashes and logs since last tags
-          CHANGELOG=\$(git log --oneline -n 20 --pretty=format:"* %h - %s")
           
           # Safe GitHub Actions multiline string delimiter injection mapping
           echo "body<<EOF" >> \$GITHUB_OUTPUT
-          echo "CHANGELOG" >> GITHUB_OUTPUT
+          git log --oneline -n 20 --pretty=format:"* %h - %s" >> \$GITHUB_OUTPUT
+          echo "" >> \$GITHUB_OUTPUT
           echo "EOF" >> \$GITHUB_OUTPUT
 
       - name: Publish Official GitHub Scaffolding Template Baseline Release
