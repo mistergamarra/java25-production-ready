@@ -25,24 +25,16 @@ jobs:
           minor_pattern: "feat:"
           version_format: "{major}.{minor}.{patch}"
 
-      - name: Compile Architectural Change Logs from Commits
-        id: release_notes
-        run: |
-          echo "Parsing recent merge logs to construct technical changelog..."
-          echo "body<<EOF" >> \$GITHUB_OUTPUT
-          git log --oneline -n 20 --pretty=format:"* %h - %s" >> \$GITHUB_OUTPUT
-          echo "" >> \$GITHUB_OUTPUT
-          echo "EOF" >> \$GITHUB_OUTPUT
-
-      # FIX: Every backslash (\) has been eliminated before the \${{ }} blocks.
-      # This allows expressions to evaluate natively as variables instead of literal text strings.
+      # FIX: Every single backslash (\) has been deleted from this entire block.
+      # The native 'generate_release_notes: true' handles the commit summaries cleanly.
       - name: Publish Official GitHub Scaffolding Template Baseline Release
         uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: \${{ steps.semver.outputs.version_tag }}
-          name: Scaffolding Blueprint \${{ steps.semver.outputs.version_tag }}
+          tag_name: ${{ steps.semver.outputs.version_tag }}
+          name: Scaffolding Blueprint ${{ steps.semver.outputs.version_tag }}
+          generate_release_notes: true
           body: |
             ## 🏗️ Baseline Java 25 Microservice Scaffold Specifications
             
@@ -51,18 +43,15 @@ jobs:
             ### 📊 Hardened Production Hardware Bounds (Verified)
             *   **RAM Allocation Ceiling:** 64MB total container capacity.
             *   **CPU Utilization Cap:** 0.5 Cores throttling restriction matrix.
-            *   **Platform Runtime Specification:** Java 25 (Preview Features Enabled) on Substrate VM.
+            *   **Platform Runtime Specification:** Java 25 (GraalVM Substrate VM).
             
             ### ⚡ Pre-Baked Infrastructure Features
             *   **Project Loom Processing Mesh:** Concurrency managed via Virtual Threads in user-space.
-            *   **Zero-Syscall JSON Logger:** Asynchronous memory ring-buffer thread (`System.out.flush()`).
-            *   **Resilient HTTP Client Engine:** `PromoClient` with 3x Exponential Backoff retries.
+            *   **Zero-Syscall JSON Logger:** Asynchronous memory ring-buffer thread execution.
+            *   **Resilient HTTP Client Engine:** Equipped with 3x Exponential Backoff retries.
             *   **Isolated Database Migrations:** Alpine Flyway database migrations handled completely out-of-band.
             
-            ### 🛠️ Developer Lifecycle Changes in This Version
-            \${{ steps.release_notes.outputs.body }}
-            
             ---
-            *To create a new high-throughput microservice using these optimized baselines, simply click the **"Use this template"** button on the GitHub UI dashboard repository home page.*
+            *To create a new high-throughput microservice using these optimized baselines, click the **"Use this template"** button.*
           draft: false
           prerelease: false
