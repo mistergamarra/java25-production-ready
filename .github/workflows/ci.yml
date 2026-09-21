@@ -16,8 +16,7 @@ jobs:
         with:
           fetch-depth: 0 # Fetches full history so semantic version parsing runs accurately
 
-      # 1. FIX: Natively calculates proper semantic version increments (Major.Minor.Patch)
-      # based on commit message headers (e.g., feat = minor, fix = patch)
+      # 1. FIX: Removed backslash formatting strings to resolve YAML compilation errors
       - name: Calculate Semantic Version Tag
         id: semver
         uses: paulhatch/semantic-version@v5.4.0
@@ -25,7 +24,7 @@ jobs:
           tag_prefix: "v"
           major_pattern: "(BREAKING CHANGE:)"
           minor_pattern: "feat:"
-          version_format: "\${major}.minor.{patch}"
+          version_format: "{major}.{minor}.{patch}"
 
       - name: Compile Architectural Change Logs from Commits
         id: release_notes
@@ -36,7 +35,7 @@ jobs:
           echo "" >> \$GITHUB_OUTPUT
           echo "EOF" >> \$GITHUB_OUTPUT
 
-      # 2. Publishes the release using the dynamically generated SemVer tag string
+      # 2. Publishes the release using the clean, dynamic SemVer tag variables output mapping
       - name: Publish Official GitHub Scaffolding Template Baseline Release
         uses: softprops/action-gh-release@v2
         env:
