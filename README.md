@@ -1,6 +1,9 @@
 # ⚡ Java 25 Production-Ready Native Microservice Scaffold
 
-![CI Status](https://github.com) ![Latest Release](https://shields.io)
+[![CI](https://github.com/mistergamarra/java25-production-ready/actions/workflows/ci.yml/badge.svg)](https://github.com/mistergamarra/java25-production-ready/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/mistergamarra/java25-production-ready)](https://github.com/mistergamarra/java25-production-ready/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 
 An ultra-low-footprint, **100% Framework-Free**, production-grade gRPC microservice template built on **Java 25 (Preview Features Enabled)**. Compiled Ahead-of-Time (AOT) down to a bare metal native binary and distributed inside a microscopic **Google Distroless** runtime container.
 
