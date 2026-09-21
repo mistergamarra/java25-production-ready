@@ -25,18 +25,18 @@ jobs:
           minor_pattern: "feat:"
           version_format: "{major}.{minor}.{patch}"
 
-      # FIX: Every single backslash (\) has been deleted from this entire block.
-      # The native 'generate_release_notes: true' handles the commit summaries cleanly.
+      # FIX: Configured the release title name to use the raw version tag string exactly.
+      # This prevents sidebar truncation bugs on the left-side release history container.
       - name: Publish Official GitHub Scaffolding Template Baseline Release
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.semver.outputs.version_tag }}
-          name: Scaffolding Blueprint ${{ steps.semver.outputs.version_tag }}
+          name: ${{ steps.semver.outputs.version_tag }}
           generate_release_notes: true
           body: |
-            ## 🏗️ Baseline Java 25 Microservice Scaffold Specifications
+            ### 🏗️ Framework-Free Java 25 Microservice Specifications
             
             This release tags a verified, hyper-performant, and production-ready scaffolding baseline layout configuration. Any new microservice instantiated from this version inherits these core engineering bounds out of the box:
             
@@ -55,3 +55,4 @@ jobs:
             *To create a new high-throughput microservice using these optimized baselines, click the **"Use this template"** button.*
           draft: false
           prerelease: false
+
