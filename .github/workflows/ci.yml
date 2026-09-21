@@ -25,8 +25,6 @@ jobs:
           minor_pattern: "feat:"
           version_format: "{major}.{minor}.{patch}"
 
-      # FIX: Stripped structural backslashes entirely from variables.
-      # Writes straight, raw markdown lines into GITHUB_OUTPUT.
       - name: Compile Architectural Change Logs from Commits
         id: release_notes
         run: |
@@ -36,8 +34,8 @@ jobs:
           echo "" >> \$GITHUB_OUTPUT
           echo "EOF" >> \$GITHUB_OUTPUT
 
-      # FIX: Removed the literal backslash prefix ("\"). Passes the calculated
-      # version tag parameter cleanly (e.g., 'v0.1.0') into the action fields layer.
+      # FIX: Every backslash (\) has been eliminated before the \${{ }} blocks.
+      # This allows expressions to evaluate natively as variables instead of literal text strings.
       - name: Publish Official GitHub Scaffolding Template Baseline Release
         uses: softprops/action-gh-release@v2
         env:
