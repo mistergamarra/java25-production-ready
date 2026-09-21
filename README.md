@@ -1,5 +1,9 @@
 # ⚡ Java 25 Production-Ready Native Microservice Scaffold
 
+[![Latest Release](https://shields.io)](https://github.com)
+[![Java Version](https://shields.io)](https://java.net)
+[![Container Memory Ceiling](https://shields.io)](#-hardened-production-hardware-bounds)
+
 An ultra-low-footprint, **100% Framework-Free**, production-grade gRPC microservice template built on **Java 25 (Preview Features Enabled)**. Compiled Ahead-of-Time (AOT) down to a bare metal native binary and distributed inside a microscopic **Google Distroless** runtime container.
 
 Built to demonstrate how to achieve **elite cloud performance** while completely eliminating framework ballast (no Spring Boot, no Quarkus, no Micronaut).
